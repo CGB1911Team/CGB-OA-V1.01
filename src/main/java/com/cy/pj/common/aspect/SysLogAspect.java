@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import com.cy.pj.common.annotation.RequiredCache;
 import com.cy.pj.common.annotation.RequiredLog;
 import com.cy.pj.common.util.IPUtils;
+import com.cy.pj.common.util.ShiroUtils;
 import com.cy.pj.sys.entity.SysLog;
 import com.cy.pj.sys.service.SysLogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -114,7 +115,7 @@ public class SysLogAspect {
 		SysLog sysLog=new SysLog();
 		
 		sysLog.setIp(IPUtils.getIpAddr());
-		sysLog.setUsername("xiaofang");
+		sysLog.setUsername(ShiroUtils.getUsername());
 		sysLog.setOperation(operation);
 		sysLog.setMethod(targetClassMethod);
 		sysLog.setParams(params);

@@ -1,8 +1,12 @@
 package com.cy.pj.sys.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.cy.pj.common.util.ShiroUtils;
+
 
 /**
  * 此Controller主要负责响应一些页面
@@ -17,7 +21,8 @@ public class PageController {
 	}
 	
 	@RequestMapping("doIndexUI")
-	public String doIndexUI() {
+	public String doIndexUI(Model model) {
+		model.addAttribute("username", ShiroUtils.getUsername()); //底层会将数据存储到请求作用域
 		return "starter";
 	}
 	

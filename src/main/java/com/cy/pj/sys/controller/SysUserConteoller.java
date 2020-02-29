@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cy.pj.common.util.ShiroUtils;
 import com.cy.pj.common.vo.JsonResult;
 import com.cy.pj.sys.entity.SysUser;
 import com.cy.pj.sys.service.SysUserService;
@@ -74,7 +75,7 @@ public class SysUserConteoller {
 	
 	@RequestMapping("doValidById")
 	public JsonResult doValidById(Integer id,Integer valid) {
-		sysUserService.validById(id, valid, "admin");//admin之后修改为登录用户
+		sysUserService.validById(id, valid, ShiroUtils.getUsername());//admin之后修改为登录用户
 		return new JsonResult("update ok");
 	}
 	

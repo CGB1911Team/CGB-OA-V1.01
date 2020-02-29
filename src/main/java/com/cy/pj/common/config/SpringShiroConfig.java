@@ -39,7 +39,6 @@ public class SpringShiroConfig {
 		return sManager;
 	}
 	
-	
 	/**
 	 * 配置shiro缓存
 	 */
@@ -52,7 +51,7 @@ public class SpringShiroConfig {
 	public RememberMeManager rememberMeManager() {
 		CookieRememberMeManager cManager=new CookieRememberMeManager();
 		SimpleCookie cookie=new SimpleCookie("rememberMe");
-		cookie.setMaxAge(7*24*60*60*1000);
+		cookie.setMaxAge(7*24*60*60);
 		cManager.setCookie(cookie);
 		return cManager;
 	}
