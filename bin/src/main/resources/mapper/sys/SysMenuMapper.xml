@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.pj.sys.dao.SysMenuDao">
+
+	<select id="findPermissions" resultType="string">
+		select permission
+		from sys_menus
+		<where>
+			<foreach collection="menuIds" separator="or" item="menuId">
+				id=#{menuId}
+			</foreach>
+		</where>
+		
+	</select>
+
+	<update id="updateObject" parameterType="com.cy.pj.sys.entity.SysMenu">
+		update sys_menus
+		set
+			name=#{name},
+			type=#{type},
+			sort=#{sort},
+       	    url=#{url},
+          	parentId=#{parentId},
+            permission=#{permission},
+            modifiedUser=#{modifiedUser},
+            modifiedTime=now()
+         where id=#{id}
+	</update>
+
+	<insert id="insertObject" parameterType="com.cy.pj.sys.entity.SysMenu">
+		insert into sys_menus
+          (name,url,type,sort,note,parentId,permission,
+createdTime,modifiedTime,createdUser,modifiedUser)
+          values
+          (#{name},#{url},#{type},#{sort},#{note},#{parentId},
+#{permission},now(),now(),#{createdUser},#{modifiedUser})
+	</insert>
+
+	<select id="findObject" resultType="map">
+		<!-- 查询所有菜单信息以及当前菜单的上级菜单的名称，一行记录映射为一个map文件 -->
+		<!-- 方案一：左外连接查询 -->
+		<!-- select c.*,p.name parentName
+		from sys_menus c left join sys_menus p on c.parentId=p.id -->
+		
+	    <!-- 方案二：嵌套查询 -->
+	    select c.*,(select p.name 
+	    			from sys_menus p 
+	    			where c.parentId=p.id) parentName
+	    from sys_menus c
+	</select>
+</mapper>

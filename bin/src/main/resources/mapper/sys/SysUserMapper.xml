@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.pj.sys.dao.SysUserDao">
+
+	<select id="findObjectById"
+           parameterType="int"
+           resultMap="sysUserDeptVo">
+           select * 
+           from sys_users   
+           where id=#{id}     
+   </select>
+
+	<update id="updatePassword">
+		update sys_users 
+		set password=#{password},
+            salt=#{salt},
+            modifiedTime=now()
+        where id=#{id}
+	</update>
+
+	<update id="updateObject"
+		parameterType="com.cy.pj.sys.entity.SysUser">
+		update sys_users
+        set username=#{username},
+            mobile=#{mobile},
+            email=#{email},
+            deptId=#{deptId},
+            modifiedTime=now(),
+            modifiedUser=#{modifiedUser}
+         where id=#{id}
+	</update>
+
+	<insert id="insertObject"
+			parameterType="com.cy.pj.sys.entity.SysUser"
+			useGeneratedKeys="true"
+			keyProperty="id">
+		insert into sys_users
+     		 (username,password,deptId,email,mobile,salt,valid,
+      		createdTime,modifiedTime,createdUser,modifiedUser)
+        values
+   			 (#{username},#{password},#{deptId},#{email},#{mobile},#{salt},#{valid},
+      		now(),now(),#{createdUser},#{modifiedUser})
+	</insert>
+
+	<update id="validById">
+		update sys_users 
+		set valid=#{valid},
+		modifiedUser=#{modifiedUser},
+		modifiedTime=now()
+		where id=#{id}
+	</update>
+
+	<!-- SQL中的共性操作 -->
+	<sql id="queryWhereId">
+		from sys_users 
+		<where>
+			<if test="username!=null and username!=''">
+				username like concat("%",#{username},"%")
+			</if>
+		</where>
+	</sql>
+	
+	<!-- 统计记录总数 -->
+	<select id="getRowCount" resultType="int">
+		select count(*) 
+		<include refid="queryWhereId" />
+	</select>
+	
+	<select id="findPageObjects" resultMap="sysUserDeptVo">
+		select *	
+		<include refid="queryWhereId" />
+		order by createdTime desc
+		limit #{startIndex},#{pageSize}
+	</select>
+	<!-- 基于resultMap定义高级映射，此元素定义用户查询的映射方式 -->
+	<resultMap type="com.cy.pj.sys.vo.SysUserDeptVo" id="sysUserDeptVo">
+		<!-- 定义关联数据的查询，应用于many2one,one2one
+		技术：基于获取到的column属性，查询信息并封装到property
+		业务：基于查询到的部门id（deptId）,再去获取部门的具体信息,最终将信息封装到sysUserDeptVo对象的sysDept属性上-->
+		<association property="sysDept" column="deptId"
+		javaType="com.cy.pj.sys.entity.SysDept"
+		select="com.cy.pj.sys.dao.SysDeptDao.findById">
+		</association>
+	</resultMap>
+	
+	
+</mapper>
