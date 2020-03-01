@@ -56,7 +56,8 @@ public class XzUserGoodsApplyConteoller {
 	    * @return
 	    */
 	   @RequestMapping("findUncheckedApply")
-	   public JsonResult findUncheckedApply(Integer userId) {
+	   public JsonResult findUncheckedApply() {
+		   Integer userId = ShiroUtils.getUser().getId();
 		   return new JsonResult(xzUserGoodsApplyService.findUncheckedApply(userId));
 	   }
 	   
@@ -66,7 +67,8 @@ public class XzUserGoodsApplyConteoller {
 	    * @return
 	    */
 	   @RequestMapping("findcheckedApply")
-	   public JsonResult findcheckedApply(Integer userId) {
+	   public JsonResult findcheckedApply() {
+		   Integer userId = ShiroUtils.getUser().getId();
 		   return new JsonResult(xzUserGoodsApplyService.findcheckedApply(userId));
 	   }
 	   
