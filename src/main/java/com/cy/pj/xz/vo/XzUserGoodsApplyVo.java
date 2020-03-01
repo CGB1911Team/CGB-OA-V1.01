@@ -3,11 +3,21 @@ package com.cy.pj.xz.vo;
 import java.io.Serializable;
 import java.util.Date;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import lombok.ToString;
+/**
+ * 
+ * @author Administrator
+ *
+ */
 @Getter
 @Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class XzUserGoodsApplyVo implements Serializable {
 
 	private static final long serialVersionUID = -7942098837994327878L;
