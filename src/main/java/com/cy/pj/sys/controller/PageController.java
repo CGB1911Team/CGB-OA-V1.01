@@ -51,6 +51,12 @@ public class PageController {
 	  else
 	      return  "sys/"+moduleUI;
 	 }
+	
+	/*
+	 * @RequestMapping("{xz/{moduleUI}") public String doModuleUI2(@PathVariable
+	 * String moduleUI) { return "xz/"+moduleUI; }
+	 */
+	
 }
 
 
