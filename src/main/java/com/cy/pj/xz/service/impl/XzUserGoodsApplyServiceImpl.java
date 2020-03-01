@@ -65,7 +65,10 @@ public class XzUserGoodsApplyServiceImpl implements XzUserGoodsApplyService{
 		List<XzGoods> list = xzUserGoodsApplyDao.findGoodsByTypeId(typeId);
 		return list;
 	}
-
+	
+	/**
+	 * 查找所有未审核的信息
+	 */
 	@Override
 	public List<XzUserGoodsApplyVo> findUncheckedApply(Integer id) {
 		List<XzUserGoodsApplyVo> list = xzUserGoodsApplyDao.findUncheckedApply(id);
@@ -73,7 +76,9 @@ public class XzUserGoodsApplyServiceImpl implements XzUserGoodsApplyService{
 			throw new ServiceException("没有正在审批的申请");
 		return list;
 	}
-
+	/**
+	 * 查找所有已审核的信息
+	 */
 	@Override
 	public List<XzUserGoodsApplyVo> findcheckedApply(Integer id) {
 		List<XzUserGoodsApplyVo> list = xzUserGoodsApplyDao.findcheckedApply(id);
