@@ -1,4 +1,4 @@
-package com.cy.pj.sys.vo;
+package com.cy.pj.xz.vo;
 
 import java.io.Serializable;
 import java.util.Date;
