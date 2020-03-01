@@ -45,15 +45,12 @@ public class PageController {
 	 */
 	//rest 风格的一种url定义，语法{url}	
 	@RequestMapping("{module}/{moduleUI}")
-	public String doModuleUI(@PathVariable String moduleUI) {
-		return "sys/"+moduleUI;
-	}
-	
-	@RequestMapping("{xz/{moduleUI}")
-	public String doModuleUI2(@PathVariable String moduleUI) {
-		return "xz/"+moduleUI;
-	}
-	
+	 public String doModuleUI(@PathVariable String module,@PathVariable String moduleUI) {
+	  if(module.equals("xz"))
+	   return "xz/"+moduleUI;
+	  else
+	      return  "sys/"+moduleUI;
+	 }
 }
 
 
