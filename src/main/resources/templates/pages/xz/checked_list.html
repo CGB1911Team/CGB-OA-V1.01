@@ -57,13 +57,7 @@
 	  });
 	  $(".input-group-btn")
 	  .on("click",".btn-search",doQueryObjects)
-	//  .on("click",".btn-add",doLoadEditUI)
-	  
-	 /*  $("#tbodyId")
-	  .on("click",".btn-delete",doDeleteObject)
-	  .on("click",".btn-update",doLoadEditUI)  */
-	  
-	  
+		  	  
 	  $(".btn-back").click(function(){
 		  var url="xz/apply_list"
 			   $("#mainContentId")
@@ -80,7 +74,7 @@
 	   doGetObjects();
    }
    function doGetObjects(){
-	   debugger
+	   //debugger
 	   //1.params
 	   //获取在Page.html中绑定的当前页码值
 	   var pageCurrent=$("#pageId").data("pageCurrent");
@@ -90,11 +84,11 @@
 	   var params={"pageCurrent":pageCurrent};
 	   //获取查询时用户输入的名字
 	   var name=$("#searchNameId").val();
-	   if(name)params.name=name;
+	   if(name)params.goodsName=name;
 	   //2.url
-	   var url="role/doFindPageObjects";
+	   var url="apply/findcheckedApply";
 	   //3.ajax request
-	   console.log(params);
+	  // console.log(params);
 	   $.getJSON(url,params,function(result){
 		   doHandleResponseResult(result);
 	   });
@@ -143,18 +137,21 @@
 	   }
    }
    function doCreateTds(row,i){
+	   
+	   var status=(row.status>0?"通过":"不通过");
+	   
 	   var tds=
        "<td>"+(parseInt(i)+1)+"</td>"+
-	   "<td>"+row.name+"</td>"+
-       "<td>"+row.note+"</td>"+
-       "<td>"+new Date(row.createdTime).toLocaleString()+"</td>"+
-       "<td>"+new Date(row.modifiedTime).toLocaleString()+"</td>"+
-       "<td>"+row.createdUser+"</td>"+
-       "<td>"+row.modifiedUser+"</td>"+
-       "<td>"+row.name+"</td>"+
-       "<td>"+row.note+"</td>"+
-       "<td>"+new Date(row.createdTime).toLocaleString()+"</td>"+
-       "<td>"+row.note+"</td>";
+	   "<td>"+row.typeName+"</td>"+
+       "<td>"+row.goodsName+"</td>"+
+       "<td>"+row.applyNumber+"</td>"+
+       "<td>"+new Date(row.applyTime).toLocaleString()+"</td>"+
+       "<td>"+row.applyDesc+"</td>"+
+       "<td>"+status+"</td>"+
+       "<td>"+row.checkName+"</td>"+
+       "<td>"+row.checkMobile+"</td>"+
+       "<td>"+new Date(row.checkedTime).toLocaleString()+"</td>"+
+       "<td>"+row.checkedDesc+"</td>";
        return tds;
    }
 </script>

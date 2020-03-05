@@ -19,9 +19,6 @@
             <label for="goodsType" class="col-sm-2 control-label">物品类别</label>
             <div class="col-sm-10">
               <select id="typeName" class="form-control">
-              	 <option value="1">类别1</option>
-              	 <option value="2">类别2</option>
-              	 <option value="3">类别3</option>
               </select>
             </div>
           </div>
@@ -79,82 +76,136 @@
   <script type="text/javascript" src="bower_components/layer/layer.js">
   </script>
   <script type="text/javascript">
-  
-  var zTree; //zTree是第三方扩展的一个Jquery插件
-  //初始化zTree时会用到
-  var setting = {
-  	data : {
-  		simpleData : {
-  			enable : true,//表示使用简单数据模式
-  			idKey : "id",  //节点数据中保存唯一标识的属性名称
-  			pIdKey : "parentId",  //节点数据中保存其父节点唯一标识的属性名称
-  			rootPId : null  //根节点id
-  		}//json 格式javascript对象
-  	}
-  }//json 格式的javascript对象
+
   $(function(){
-	  $(".form-horizontal")//#mainContentId 一直存在每次点击都会注册一次
-	  //$("#mainContentId")//#mainContentId 一直存在每次点击都会注册一次
-	  .on("click",".load-sys-menu",doLoadZtreeNodes);
-	  
-	  $("#menuLayer")
-      .on("click",".btn-confirm",doSetSelectNode)
-      .on("click",".btn-cancel",doHideTree);
-	  
 	  $(".box-footer")
 	  .on("click",".btn-cancel",doCancel)
-	  .on("click",".btn-save",doSaveOrUpdate)
-	  
-	  var data=$("#mainContentId").data("rowData");
-	  if(data)doInitEditFormData(data);
+	  .on("click",".btn-save",doSaveOrUpdate);
 
+	  doGetGoodsType();
+	  
+	  $("#typeName").change(function(){
+		  //alert($(this).val());
+		  var typeId=$(this).val();
+		  doGetSelectTypeGoods(typeId);
+	  })
+	  
+	    $("#goodsList").change(function(){
+	    	var option = $("#goodsList option:selected");
+	    	var num=option.attr("title");
+	    	$("#goodsList").data("countNum",num);
+	  })
+	  
   })
-  function doInitEditFormData(data){
-		/*   $("input[type='radio']").each(function(){
-			  if($(this).val()==data.type){
-				  $(this).prop("checked",true);
+ 
+  function doGetGoodsType(){
+	  $("#typeName").empty();
+	  var url="apply/findAllTypes";
+	  //debugger
+	   $.get(url,"",function(result){
+			  if(result.state==1){
+				  doGetSelectTypes(result.data);				  
+			  }else{
+				  alert(result.message);
 			  }
-		  }) */
-		  $(".typeRadio input[value='"+data.type+"']").prop("checked",true);
-		  $("#nameId").val(data.name);
-		  $("#sortId").val(data.sort);
-		  $("#urlId").val(data.url);
-		  $("#permissionId").val(data.permission);
-		  $("#parentId").val(data.parentName);
-		  $("#parentId").data("parentId",data.parentId);
+	  });
+  }
+  
+  function doGetSelectTypes(rows){
+	  var options="";
+	  for(var i=0;i<rows.length;i++){
+		  options+="<option value='"+rows[i].id+"'>"+rows[i].name+"</option>";
+	  }
+	  //alert(options);	  
+	  $("#typeName").append($(options));
+	  
+	  //初次加载默认类别ID为1
+	  var selectTypeId=1;
+	  doGetSelectTypeGoods(selectTypeId);
+  }
+  
+  function doGetSelectTypeGoods(typeId){
+	  
+	  $("#goodsList").empty();
+	  
+	  var url="apply/findGoods";
+	  var param={"typeId":typeId};
+	   $.get(url,param,function(result){
+			  if(result.state==1){
+				  doGetSelectGoods(result.data);				  
+			  }else{
+				  alert(result.message);
+			  }
+	  });
   }
 
+  function doGetSelectGoods(rows){
+	  var options="";
+	  
+	  if(rows.length<1){
+		  options="<option value='0'>该类别暂无物品！</option>";
+		  $("#goodsList").append($(options));
+	  }
+	  
+	  for(var i=0;i<rows.length;i++){		
+		  var num=rows[i].repertoryNumber-rows[i].occupiedNumber;
+		  
+		  options="<option value='"+rows[i].id+"' title='"+num+"'>"+rows[i].name+"&nbsp;&nbsp;(余"+num+"件)"+"</option>";
+		  $("#goodsList").append($(options));
+		  if(i==0){
+			  $("#goodsList").data("countNum",num);
+		  }
+	  }
+	  //alert(options);
+  }
+  
   //获取表单数据
   function doGetEditFormData(){
-	  var params={
-	    type:$("form input[name='typeId']:checked").val(),
-		name:$("#nameId").val(),
-		url:$("#urlId").val(),
-		sort:$("#sortId").val(),
-		permission:$("#permissionId").val(),
-		parentId:$("#parentId").data("parentId")
+	  
+	  var goodsId=$("#goodsList").val();
+	  var countNumber=$("#goodsList").data("countNum");
+	  var applyNumber=$("#applyNum").val();
+	  var applyDesc=$("#applyDesc").val();
+	  
+	  //参数校验
+	  if(goodsId=="0"){
+		  alert("请选择物品!");
 	  }
+	  
+	  if(applyNumber==""||applyDesc==""){
+		  alert("申请数目与申请描述不能为空!");
+	  }
+	  
+	  if(countNumber<applyNumber){
+		  alert("选择数目超出库存，请重新选择！");
+	  }
+	  
+	  //debugger
+	  var params={
+	    goodsId:goodsId,
+		applyNumber:applyNumber,
+		applyDesc:applyDesc,
+	 }
 	  return params;
   }
+  
   function doSaveOrUpdate(){
 	  //1.获取表单数据
 	   var params=doGetEditFormData();
-	   var rowData=
-	   $("#mainContentId").data("rowData");
-	  //2.异步提交表单数据(post)
-	   var insertUrl="menu/doSaveObject";
-	   var updateUrl="menu/doUpdateObject";
-	   var url=rowData?updateUrl:insertUrl;
-	   if(rowData)params.id=rowData.id;
-	   $.post(url,params,function(result){
+	  //2.异步提交表单数据(post)	 
+	   var url="apply/doApply";
+
+	    $.post(url,params,function(result){
 			  if(result.state==1){
 				  alert(result.message);
 				  doCancel();
 			  }else{
 				  alert(result.message);
 			  }
-	  });
+	  }); 
   }
+  
+  
   //编辑页面cancel事件处理
   function doCancel(){
 	  //1.定义url
@@ -163,70 +214,11 @@
 	  $("#mainContentId").load(url);
   }
   
-  //zTree取消按钮事件处理函数
-  function doHideTree(){
-		 $("#menuLayer").css("display","none");
-  }
-  //zTree确定按钮事件处理函数
-  function doSetSelectNode(){
-	  //1.获取选中的节点对象
-	  var nodes=zTree.getSelectedNodes();
-	  if(nodes.length==1){	  
-       var selectedNode=nodes[0];
-       console.log("selectNode",selectedNode);
-       var rowData=$("#mainContentId").data("rowData");
-       if(rowData){//修改时做如下处理
-      //判定当前选中的上级菜单节点是否为当前要修改节点的子节点.
-    	  var flag=isChild(rowData.id,selectedNode);
-    	  if(flag){
-    		  alert("不能选择当前节点以及对应子节点");
-    		  return;
-    	  }
-       }
-	  //2.将对象中内容,填充到表单
-	   $("#parentId").data("parentId",selectedNode.id);
-	   $("#parentId").val(selectedNode.name);
-      }
-	  //3.隐藏树对象
-	  doHideTree();
-  }
-  //判定当前选中节点是否是当前节点的子节点
-  function isChild(currentNodeId,selectNode){
-	 if(selectNode.id==currentNodeId)return true;
-	 var node=selectNode.getParentNode();
-	 if(!node)return false;
-	 return isChild(currentNodeId,node);
-  }
-  function doLoadZtreeNodes(){
-	  var url="menu/doFindZtreeMenuNodes";
-	  //异步加载数据,并初始化数据
-	  $.getJSON(url,function(result){
-		  if(result.state==1){
-			  //使用init函数需要先引入ztree对应的js文件
-			  zTree=$.fn.zTree.init(
-					  $("#menuTree"),
-					  setting,
-					  result.data);//id,name,parentId
-			   //doRemoveNodeFromZtree();//修改时,可考虑此方案
-			   //显示zTree对应的div
-			   $("#menuLayer").css("display","block");
-		  }else{
-			  alert(result.message);
-		  }
-	  })
-  }
-  function doRemoveNodeFromZtree(){
-	  //判定是否是修改,假如是修改,从zTree中移除当前菜单以及对应子菜单
-      var rowData=$("#mainContentId").data("rowData");
-	   if(rowData){//rowData有值,表示是修改.
-		  console.log("zTree",zTree);
-		  //1.获取当前的菜单对象
-		  var node=zTree.getNodeByParam("id",rowData.id,null);
-		  console.log("node",node);
-		  //2.移除当前菜单.
-		  zTree.removeNode(node);
-	   }
-  }
+ 
+  
+  
+ 
+ 
 
  </script>
     

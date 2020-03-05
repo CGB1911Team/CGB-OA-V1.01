@@ -54,11 +54,6 @@
 	  .on("click",".btn-search",doQueryObjects)
 	  .on("click",".btn-add",doLoadEditUI)
 	  
-	  $("#tbodyId")
-	  .on("click",".btn-delete",doDeleteObject)
-	  .on("click",".btn-update",doLoadEditUI) 
-	  
-	  
 	  $(".btn-checked").click(function(){
 		  
 		  var url="xz/checked_list"
@@ -70,27 +65,13 @@
 	  })
 	  
    });
-   function doLoadEditUI(){
+    function doLoadEditUI(){
 	   var title;
 	   if($(this).hasClass('btn-add')){
 		   title="新申请";
 		   doLoadPageUI(title);
-	   }else{
-		  /*  title="修改角色"
-		   var id=$(this).parents("tr").data("id");
-		   var params={"id":id};
-		   var url="role/doFindObjectById";
-		   $.getJSON(url,params,function(result){
-			   if(result.state==1){
-				  result.data.id=id;//在结果中动态追加id
-				  $("#mainContentId").data("data",result.data);
-				  doLoadPageUI(title);//异步加载页面  
-			   }else{
-				  alert(result.message); 
-			   }
-		   }); */
 	   }
-   }
+   } 
    function doLoadPageUI(title){
 	   var url="xz/apply_edit"
 	   $("#mainContentId")
@@ -98,49 +79,33 @@
 		   $(".box-title").html(title);
 	   })
    }
-   function doDeleteObject(){
-	   //1.params
-	   var id=$(this).parents("tr").data("id");
-	   var params={"id":id};
-	   //2.url
-	   var url="role/doDeleteObject"
-	   //3.ajax request
-	   $.post(url,params,function(result){
-		   if(result.state==1){
-			   alert(result.message);
-			   doGetObjects();
-		   }else{
-			   alert(result.message);
-		   }
-	   })
-	   
-   }
+
    function doQueryObjects(){
 	   $("#pageId").data("pageCurrent",1);
 	   doGetObjects();
    }
    function doGetObjects(){
-	   debugger
 	   //1.params
 	   //获取在Page.html中绑定的当前页码值
 	   var pageCurrent=$("#pageId").data("pageCurrent");
 	   //假如没有值,设置初始值为1
 	   if(!pageCurrent)pageCurrent=1;
-	   //var params="pageCurrrent="+pageCurrent;
+	   
 	   var params={"pageCurrent":pageCurrent};
 	   //获取查询时用户输入的名字
 	   var name=$("#searchNameId").val();
-	   if(name)params.name=name;
+	   if(name)params.goodsName=name;
+	   
 	   //2.url
-	   var url="role/doFindPageObjects";
+	   var url="apply/findUncheckedApply";
 	   //3.ajax request
-	   console.log(params);
+	   //console.log(params);
 	   $.getJSON(url,params,function(result){
 		   doHandleResponseResult(result);
 	   });
    }
    function doHandleResponseResult(result){
-	   
+	   //debugger;
 	   if(result.state==1){
 		  doSetTableBodyRows(result.data.records);
 		  doSetPagination(result.data);//page.html
@@ -155,7 +120,6 @@
 	   //创建tr对象
 	   var tr=$("<tr></tr>");
 	   //创建td对象
-	   //var len=$("table thead").find("tr").find("th").length;
 	   var len=$("table th").length;
 	   var td=$("<td></td>");
 	   td.prop("colspan",len);
@@ -185,15 +149,12 @@
    function doCreateTds(row,i){
 	   var tds=
        "<td>"+(parseInt(i)+1)+"</td>"+
-	   "<td>"+row.name+"</td>"+
-       "<td>"+row.note+"</td>"+
-       "<td>"+new Date(row.createdTime).toLocaleString()+"</td>"+
-       "<td>"+new Date(row.modifiedTime).toLocaleString()+"</td>"+
-       "<td>"+row.createdUser+"</td>"
-       + "<td>"+row.modifiedUser+"</td>"
-      /* + "<td>"+row.modifiedUser+"</td>"+
-       "<td><a class='btn-delete'>delete</a>"+
-       "&nbsp;<a class='btn-update'>update</a></td>" */
+	   "<td>"+row.typeName+"</td>"+
+       "<td>"+row.goodsName+"</td>"+
+       "<td>"+row.applyNumber+"</td>"+
+       "<td>"+new Date(row.applyTime).toLocaleString()+"</td>"+
+       "<td>"+row.applyDesc+"</td>"+
+       "<td>待审核</td>"
        ;
        return tds;
    }
