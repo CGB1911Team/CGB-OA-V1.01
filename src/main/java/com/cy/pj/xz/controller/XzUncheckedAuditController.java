@@ -15,7 +15,7 @@ import com.cy.pj.common.vo.PageObject;
 import com.cy.pj.xz.service.XzUncheckedAuditService;
 import com.cy.pj.xz.vo.XzUserGoodsApplyVo;
 @RestController
-@RequestMapping("/audit/")
+@RequestMapping("/unaudit/")
 public class XzUncheckedAuditController {
 
 	@Autowired
@@ -24,6 +24,7 @@ public class XzUncheckedAuditController {
 	@ResponseBody
 	public JsonResult findUncheckedAudit(Integer id,Integer pageCurrent) {
 		PageObject<XzUserGoodsApplyVo> pageObject = xzUncheckedAuditService.findUncheckedAudit(id, pageCurrent);
+		System.out.println("newyeat");
 		return new JsonResult(pageObject);
 	}
 }
